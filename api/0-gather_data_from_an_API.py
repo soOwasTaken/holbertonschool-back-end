@@ -1,25 +1,32 @@
 #!/usr/bin/python3
-"""Gather data from an API"""
-
+"""Json to ouput in python"""
 import requests
-from sys import argv
-
-
-api_url = "https://jsonplaceholder.typicode.com"
+import sys
 
 if __name__ == "__main__":
-    user_info = requests.get(f"{api_url}/users/{argv[1]}").json()
-    todo_list = requests.get(f"{api_url}/todos?userId={argv[1]}").json()
+    if len(sys.argv) != 2:
+        print("need employee_id")
+        sys.exit(1)
 
-    done_tasks = []
-    for task in todo_list:
-        if task['completed'] is True:
-            done_tasks.append(task)
-    number_of_done_tasks = len(done_tasks)
-    total_number_of_tasks = len(todo_list)
-    employee_name = user_info["name"]
+    employee_id = sys.argv[1]
+    response = requests.get(
+        f"https://jsonplaceholder.typicode.com/todos?userId={employee_id}")
+    response_user_name = requests.get(
+        f"https://jsonplaceholder.typicode.com/users?id={employee_id}")
 
-    print(f"Employee {employee_name} is done with tasks\
-({number_of_done_tasks}/{total_number_of_tasks}):")
-    for task in done_tasks:
-        print(f"\t {task['title']}")
+    task_lists = response.json()
+    name_scrapping = response_user_name.json()
+    completed_tasks = []
+    for task_list in task_lists:
+        if task_list["completed"]:
+            completed_tasks.append(task_list["title"])
+
+    employee_name = name_scrapping[0]['name']
+    total_tasks = len(task_lists)
+    num_completed_tasks = len(completed_tasks)
+
+    print(
+        f"Employee {employee_name} is done with tasks\
+            ({num_completed_tasks}/{total_tasks}):")
+    for task in completed_tasks:
+        print(f"\t {task}")
