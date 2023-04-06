@@ -8,14 +8,16 @@ if len(sys.argv) != 2:
 
 employee_id = sys.argv[1]
 response = requests.get(f"https://jsonplaceholder.typicode.com/todos?userId={employee_id}")
+response_user_name = requests.get(f"https://jsonplaceholder.typicode.com/users?id={employee_id}")
 
 task_lists = response.json()
+name_scrapping = response_user_name.json()
 completed_tasks = []
 for task_list in task_lists:
     if task_list["completed"]:
         completed_tasks.append(task_list["title"])
 
-employee_name = task_lists[0]["userId"]
+employee_name = name_scrapping[0]['name']
 total_tasks = len(task_lists)
 num_completed_tasks = len(completed_tasks)
 
