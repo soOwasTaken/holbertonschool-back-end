@@ -22,7 +22,7 @@ if __name__ == "__main__":
             completed_tasks.append(task_list["title"])
 
     employee_name = name_scrapping[0]['name']
-    total_tasks = len(task_lists)   
+    total_tasks = len(task_lists)
     num_completed_tasks = len(completed_tasks)
 
     print(
