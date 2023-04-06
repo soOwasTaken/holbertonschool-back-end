@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+"""Json to ouput in python"""
 import requests
 import sys
 
