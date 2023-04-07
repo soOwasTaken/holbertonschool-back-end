@@ -8,7 +8,7 @@ todos_url = "https://jsonplaceholder.typicode.com/todos"
 
 
 def gather_todo_data():
-    """ Gather data about employee TODOs """
+    """ Gather data about employees TODOs """
 
     response = requests.get(todos_url).json()
     todos_by_user = {}
