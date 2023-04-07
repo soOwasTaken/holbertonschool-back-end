@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+"""Json to ouput in python"""
 import json
 import requests
 
@@ -27,7 +29,3 @@ def get_username(user_id):
     """ Fetch username for given user ID """
     response = requests.get(users_url + str(user_id)).json()
     return response[0]['username']
-
-
-if __name__ == "__main__":
-    gather_todo_data()
