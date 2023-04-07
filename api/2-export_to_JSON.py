@@ -1,41 +1,37 @@
 #!/usr/bin/python3
-"""Json to ouput in python"""
+"""Json to output in python"""
+import json
 import requests
 import sys
-import json
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("need employee_id")
+        print("Need employee_id")
         sys.exit(1)
 
     employee_id = sys.argv[1]
-    response = requests.get(
-        f"https://jsonplaceholder.typicode.com/todos?userId={employee_id}")
-    response_user_name = requests.get(
-        f"https://jsonplaceholder.typicode.com/users?id={employee_id}")
 
-    task_lists = response.json()
-    name_scrapping = response_user_name.json()
-    completed_tasks = []
-    for task_list in task_lists:
-        if task_list["completed"]:
-            completed_tasks.append({
-                "task": task_list["title"],
-                "completed": task_list["completed"],
-                "username": name_scrapping[0]['name']
-            })
+    # Get the list of tasks for the given employee ID
+    response_tasks = requests.get(f"https://jsonplaceholder.typicode.com/todos?userId={employee_id}")
+    tasks = response_tasks.json()
 
-    employee_name = name_scrapping[0]['name']
-    total_tasks = len(task_lists)
-    num_completed_tasks = len(completed_tasks)
+    # Get the name of the employee
+    response_name = requests.get(f"https://jsonplaceholder.typicode.com/users?id={employee_id}")
+    employee_name = response_name.json()[0]['name']
 
-    print(
-        f"Employee {employee_name} is done with tasks\
-({num_completed_tasks}/{total_tasks}):")
-    for task in completed_tasks:
-        print(f"\t {task['task']}")
+    # Create a list of tasks for the employee
+    task_list = []
+    for task in tasks:
+        task_list.append({"task": task["title"], "completed": task["completed"], "username": employee_name})
 
-    # Exporting data in JSON format
-    with open(f"{employee_id}.json", "w") as f:
-        json.dump({employee_id: completed_tasks}, f)
+    # Print the tasks
+    print(f"Tasks for employee {employee_name} ({len(task_list)} total):")
+    for task in task_list:
+        print(f"\t{task['task']} - {'Done' if task['completed'] else 'Not done'}")
+
+    # Export the data to a JSON file
+    filename = f"{employee_id}.json"
+    with open(filename, "w") as f:
+        json.dump({employee_id: task_list}, f)
+
+    print(f"The data has been exported to {filename}")
