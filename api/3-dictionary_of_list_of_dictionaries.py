@@ -1,29 +1,30 @@
-#!/usr/bin/python3
-"""Json to output in python"""
 import json
 import requests
 
 if __name__ == "__main__":
-    # Get the list of all tasks
-    response_tasks = requests.get("https://jsonplaceholder.typicode.com/todos")
-    all_tasks = response_tasks.json()
+    # retrieve all employee IDs from the API
+    response_users = requests.get(
+        "https://jsonplaceholder.typicode.com/users")
+    users = response_users.json()
 
-    # Get the list of all users
-    response_users = requests.get("https://jsonplaceholder.typicode.com/users")
-    all_users = response_users.json()
+    # loop through all employee IDs and retrieve tasks for each employee
+    all_tasks = {}
+    for user in users:
+        response = requests.get(
+            f"https://jsonplaceholder.typicode.com/todos?userId={user['id']}")
+        task_lists = response.json()
+        tasks = []
+        for task_list in task_lists:
+            task = {
+                "username": user['username'],
+                "task": f"{user['username']} - {task_list['title']}",
+                "completed": task_list["completed"]
+            }
+            tasks.append(task)
+        all_tasks[user['id']] = tasks
 
-    # Create a dictionary of tasks for each user
-    user_tasks = {}
-    for user in all_users:
-        user_id = str(user["id"])
-        username = user["name"]
-        user_tasks[user_id] = {"username": username, "tasks": []}
-        for task in all_tasks:
-            if str(task["userId"]) == user_id:
-                user_tasks[user_id]["tasks"].append(
-                    {"task": task["title"], "completed": task["completed"]})
+    # create the output dictionary with all tasks
+    output_dict = all_tasks
 
-    # Export the data to a JSON file
-    filename = "todo_all_employees.json"
-    with open(filename, "w") as f:
-        json.dump(user_tasks, f)
+    with open("todo_all_employees.json", "w") as outfile:
+        json.dump(output_dict, outfile)
