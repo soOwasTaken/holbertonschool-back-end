@@ -29,5 +29,3 @@ if __name__ == "__main__":
     filename = "todo_all_employees.json"
     with open(filename, "w") as f:
         json.dump(user_tasks, f)
-
-    print(f"The data has been exported to {filename}")
