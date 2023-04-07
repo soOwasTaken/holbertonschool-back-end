@@ -1,5 +1,8 @@
+#!/usr/bin/python3
+"""Json to ouput in python"""
 import json
 import requests
+import sys
 
 if __name__ == "__main__":
     # retrieve all employee IDs from the API
