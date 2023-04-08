@@ -4,29 +4,21 @@
 import json
 import requests
 
-USERS_URL = "https://jsonplaceholder.typicode.com/users?id="
-TODOS_URL = "https://jsonplaceholder.typicode.com/todos"
-
-
-def gather_todo_data():
-    """Gather data about employees TODOs"""
-
-    response = requests.get(TODOS_URL).json()
-    todos_by_user = {}
-    for todo in response:
-        if todo['userId'] not in todos_by_user:
-            todos_by_user[todo['userId']] = []
-        todos_by_user[todo['userId']].append({
-            'username': get_username(todo['userId']),
-            'task': todo['title'],
-            'completed': todo['completed']
+if __name__ == '__main__':
+    API = 'https://jsonplaceholder.typicode.com'
+    user_response = requests.get(f"{API}/users/").json()
+    tlist_response = requests.get(f"{API}/todos").json()
+    task_by_user = {}
+    for task in tlist_response:
+        user_id = task['userId']
+        if user_id not in task_by_user:
+            task_by_user[user_id] = []
+        task_by_user[user_id].append({
+            "task": task['title'],
+            "completed": task['completed'],
+            "username": next(user[
+                'username'] for user in user_response if user['id'] == user_id)
         })
 
-    with open('todo_all_employees.json', 'w') as f:
-        json.dump(todos_by_user, f)
-
-
-def get_username(user_id):
-    """Fetch username for given user ID"""
-    response = requests.get(USERS_URL + str(user_id)).json()
-    return response[0]['username']
+    with open("todo_all_employees.json", mode='w') as json_file:
+        json.dump(task_by_user, json_file)
